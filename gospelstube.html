@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GospelsTube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0D1B2A;
+      --navy-mid: #1E2D3D;
+      --navy-card: #162335;
+      --gold: #C9A84C;
+      --gold-light: #E2C06A;
+      --gold-glow: rgba(201,168,76,0.18);
+      --white: #F7F3EE;
+      --dove: #8B9EB7;
+      --text-body: #C8D5E3;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,27,42,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      padding: 0 24px;
+      height: 60px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.01em;
+    }
+    .logo-text span { color: var(--gold); }
+
+    .search-bar {
+      flex: 1; max-width: 480px; margin: 0 auto;
+      display: flex;
+      background: var(--navy-mid);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+    .search-bar input {
+      flex: 1; border: none; outline: none;
+      background: transparent;
+      padding: 8px 16px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+    .search-bar input::placeholder { color: var(--dove); }
+    .search-bar button {
+      background: var(--gold);
+      border: none; cursor: pointer;
+      padding: 0 16px;
+      color: var(--navy);
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover { background: var(--gold-light); }
+
+    .nav-actions {
+      display: flex; align-items: center; gap: 12px;
+      margin-left: auto;
+    }
+    .btn-upload {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--gold);
+      color: var(--navy);
+      border: none; cursor: pointer;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600; font-size: 0.85rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-upload:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #7B5EA7);
+      border: 2px solid var(--gold);
+      cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+    .hero-cross {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px; height: 220px;
+      opacity: 0.04;
+      animation: pulse-cross 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse-cross {
+      0%, 100% { opacity: 0.04; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.07; transform: translate(-50%, -50%) scale(1.06); }
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+    .hero p {
+      color: var(--dove);
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    /* ── CATEGORY PILLS ── */
+    .categories {
+      padding: 0 24px 24px;
+      display: flex; gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .pill {
+      flex-shrink: 0;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(201,168,76,0.3);
+      background: transparent;
+      color: var(--dove);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .pill:hover, .pill.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      padding: 8px 24px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .section-header h2::before {
+      content: '';
+      display: inline-block;
+      width: 3px; height: 1em;
+      background: var(--gold);
+      margin-right: 10px;
+      vertical-align: middle;
+      border-radius: 2px;
+    }
+    .see-all {
+      color: var(--gold);
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .see-all:hover { text-decoration: underline; }
+
+    /* ── FEATURED (horizontal scroll) ── */
+    .featured-row {
+      padding: 0 24px 32px;
+      display: flex; gap: 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .featured-row::-webkit-scrollbar { display: none; }
+    .featured-card {
+      flex-shrink: 0;
+      width: 300px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--navy-card);
+      border: 1px solid rgba(201,168,76,0.1);
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .featured-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201,168,76,0.45);
+      box-shadow: 0 8px 32px rgba(201,168,76,0.12);
+    }
+    .featured-thumb {
+      width: 100%; height: 168px;
+      position: relative; overflow: hidden;
+    }
+    .featured-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .featured-card:hover .featured-thumb img { transform: scale(1.05); }
+    .play-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .featured-card:hover .play-overlay { opacity: 1; }
+    .play-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.9);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .duration-badge {
+      position: absolute; bottom: 8px; right: 8px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 0.72rem; font-weight: 500;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .featured-info { padding: 12px 14px 14px; }
+    .featured-info h3 {
+      font-size: 0.95rem; font-weight: 600;
+      line-height: 1.4; margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-meta {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--dove); font-size: 0.78rem;
+    }
+    .channel-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #8B6EAE);
+      flex-shrink: 0;
+    }
+    .verified { color: var(--gold); font-size: 0.7rem; }
+
+    /* ── GRID ── */
+    .video-grid {
+      padding: 0 24px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .video-card {
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--navy-card);
+      border: 1px solid rgba(201,168,76,0.08);
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .video-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(201,168,76,0.35);
+      box-shadow: 0 6px 24px rgba(201,168,76,0.1);
+    }
+    .video-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      position: relative; overflow: hidden;
+    }
+    .video-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .video-card:hover .video-thumb img { transform: scale(1.04); }
+    .video-card:hover .play-overlay { opacity: 1; }
+    .video-info { padding: 10px 12px 12px; }
+    .video-info h3 {
+      font-size: 0.88rem; font-weight: 500;
+      line-height: 1.4; margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .video-meta {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--dove); font-size: 0.75rem;
+    }
+    .channel-avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .meta-sep { color: rgba(139,158,183,0.4); }
+
+    /* ── SIDEBAR PANEL (Upload Modal) ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--navy-mid);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 16px;
+      padding: 32px;
+      width: 90%; max-width: 460px;
+      position: relative;
+    }
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    .modal p { color: var(--dove); font-size: 0.9rem; margin-bottom: 24px; }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--dove);
+      font-size: 1.4rem; cursor: pointer;
+    }
+    .drop-zone {
+      border: 2px dashed rgba(201,168,76,0.4);
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 20px;
+    }
+    .drop-zone:hover {
+      border-color: var(--gold);
+      background: var(--gold-glow);
+    }
+    .drop-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .drop-zone p { color: var(--dove); margin-bottom: 0; font-size: 0.88rem; }
+    .drop-zone strong { color: var(--gold); }
+    .form-field { margin-bottom: 14px; }
+    .form-field label {
+      display: block; font-size: 0.82rem;
+      color: var(--dove); margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .form-field input, .form-field select, .form-field textarea {
+      width: 100%;
+      background: var(--navy);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus { border-color: var(--gold); }
+    .form-field textarea { resize: vertical; min-height: 72px; }
+    .form-field select option { background: var(--navy-mid); }
+    .btn-submit {
+      width: 100%;
+      background: var(--gold);
+      color: var(--navy);
+      border: none; cursor: pointer;
+      padding: 11px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { background: var(--gold-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(201,168,76,0.12);
+      padding: 32px 24px;
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+    }
+    .footer-logo span { color: var(--gold); }
+    footer p { color: var(--dove); font-size: 0.8rem; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      color: var(--dove); text-decoration: none;
+      font-size: 0.82rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    @media (max-width: 600px) {
+      .hero { padding: 40px 16px 32px; }
+      .video-grid { grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px 32px; }
+      .section-header, .categories, .featured-row { padding-left: 16px; padding-right: 16px; }
+    }
+    @media (max-width: 400px) {
+      .video-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-icon">✝</div>
+    <span class="logo-text">Gospels<span>Tube</span></span>
+  </a>
+  <div class="search-bar">
+    <input type="text" placeholder="Search worship songs, sermons, praise…" />
+    <button>🔍</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-upload" onclick="document.getElementById('uploadModal').classList.add('open')">
+      ＋ Upload
+    </button>
+    <div class="avatar"></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="hero-cross" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="43" y="5" width="14" height="90" rx="4" fill="#C9A84C"/>
+    <rect x="10" y="30" width="80" height="14" rx="4" fill="#C9A84C"/>
+  </svg>
+  <h1>Worship Freely.<br /><em>Share the Gospel.</em></h1>
+  <p>A home for worship music, sermons, and praise content — copyright-free, community-driven, and Spirit-led.</p>
+</section>
+
+<!-- CATEGORIES -->
+<div class="categories">
+  <button class="pill active">All</button>
+  <button class="pill">Worship Music</button>
+  <button class="pill">Sermons</button>
+  <button class="pill">Praise & Worship</button>
+  <button class="pill">Gospel Choir</button>
+  <button class="pill">Devotionals</button>
+  <button class="pill">Children's Ministry</button>
+  <button class="pill">Prayer</button>
+  <button class="pill">Testimony</button>
+  <button class="pill">Live Service</button>
+</div>
+
+<!-- FEATURED -->
+<div class="section-header">
+  <h2>Featured This Week</h2>
+  <a class="see-all" href="#">View all</a>
+</div>
+<div class="featured-row">
+
+  <div class="featured-card">
+    <div class="featured-thumb">
+      <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80" alt="Worship night" />
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
+      <span class="duration-badge">48:22</span>
+    </div>
+    <div class="featured-info">
+      <h3>Sunday Night Worship Live — "Open the Heavens"</h3>
+      <div class="card-meta">
+        <div class="channel-dot"></div>
+        <span>Grace Community Church</span>
+        <span class="verified">✓</span>
+        <span class="meta-sep">·</span>
+        <span>12K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="featured-card">
+    <div class="featured-thumb">
+      <img src="https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?w=600&q=80" alt="Piano worship" />
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
+      <span class="duration-badge">5:14</span>
+    </div>
+    <div class="featured-info">
+      <h3>Original Composition — "Still Waters" (Piano & Vocals)</h3>
+      <div class="card-meta">
+        <div class="channel-dot" style="background:linear-gradient(135deg,#8B6EAE,#4A90D9)"></div>
+        <span>Miriam Osei Music</span>
+        <span class="verified">✓</span>
+        <span class="meta-sep">·</span>
+        <span>8.4K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="featured-card">
+    <div class="featured-thumb">
+      <img src="https://images.unsplash.com/photo-1478147427282-58a87a433a37?w=600&q=80" alt="Gospel choir" />
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
+      <span class="duration-badge">7:01</span>
+    </div>
+    <div class="featured-info">
+      <h3>Mass Choir — "Way Maker" (Live Performance)</h3>
+      <div class="card-meta">
+        <div class="channel-dot" style="background:linear-gradient(135deg,#C9A84C,#E85D04)"></div>
+        <span>Victory Voices Choir</span>
+        <span class="meta-sep">·</span>
+        <span>21K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="featured-card">
+    <div class="featured-thumb">
+      <img src="https://images.unsplash.com/photo-1606041008023-472dfb5e530f?w=600&q=80" alt="Sermon" />
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
+      <span class="duration-badge">32:47</span>
+    </div>
+    <div class="featured-info">
+      <h3>Sermon: "Walking in Purpose" — Pastor Emmanuel Addo</h3>
+      <div class="card-meta">
+        <div class="channel-dot" style="background:linear-gradient(135deg,#2ECC71,#1A6B3C)"></div>
+        <span>New Covenant Ministries</span>
+        <span class="verified">✓</span>
+        <span class="meta-sep">·</span>
+        <span>5.7K views</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- GRID -->
+<div class="section-header">
+  <h2>Recently Uploaded</h2>
+  <a class="see-all" href="#">View all</a>
+</div>
+<div class="video-grid">
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">4:33</span>
+    </div>
+    <div class="video-info">
+      <h3>Acoustic Worship — "In Your Presence" (Original)</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=12" alt="" />
+        <span>Sarah & Emmanuel</span>
+        <span class="meta-sep">·</span>
+        <span>1.2K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">18:05</span>
+    </div>
+    <div class="video-info">
+      <h3>Morning Devotional — Scripture & Prayer for Monday</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=25" alt="" />
+        <span>Daily Bread Ministry</span>
+        <span class="meta-sep">·</span>
+        <span>3.8K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">6:12</span>
+    </div>
+    <div class="video-info">
+      <h3>Children's Praise Songs — Fun Bible Worship for Kids</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=8" alt="" />
+        <span>Little Lights Kids</span>
+        <span class="meta-sep">·</span>
+        <span>9.1K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">3:58</span>
+    </div>
+    <div class="video-info">
+      <h3>Gospel Piano Instrumental — "Amazing Grace" Reimagined</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=33" alt="" />
+        <span>Keys of Praise</span>
+        <span class="meta-sep">·</span>
+        <span>4.4K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1574870111867-089730e5a72b?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">22:14</span>
+    </div>
+    <div class="video-info">
+      <h3>Sermon: "The Power of Faith" — Pastor Blessing Nwosu</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=47" alt="" />
+        <span>Living Word Church</span>
+        <span class="meta-sep">·</span>
+        <span>2.6K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">9:40</span>
+    </div>
+    <div class="video-info">
+      <h3>Testimony — "How God Restored My Family"</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=19" alt="" />
+        <span>Faith Stories</span>
+        <span class="meta-sep">·</span>
+        <span>7.2K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1524230572899-a752b3835840?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">5:55</span>
+    </div>
+    <div class="video-info">
+      <h3>Midnight Praise — Spontaneous Worship Session</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=55" alt="" />
+        <span>House of Glory</span>
+        <span class="meta-sep">·</span>
+        <span>11K views</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <div class="video-thumb">
+      <img src="https://images.unsplash.com/photo-1464375117522-1311d6a5b81f?w=480&q=75" alt="" />
+      <div class="play-overlay"><div class="play-btn" style="width:36px;height:36px;font-size:14px">▶</div></div>
+      <span class="duration-badge">14:28</span>
+    </div>
+    <div class="video-info">
+      <h3>Bible Study — "Understanding the Book of Psalms" Pt.1</h3>
+      <div class="video-meta">
+        <img class="channel-avatar" src="https://i.pravatar.cc/40?img=62" alt="" />
+        <span>Word Unpacked</span>
+        <span class="meta-sep">·</span>
+        <span>6.0K views</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Gospels<span>Tube</span></div>
+    <p style="margin-top:6px">Worship freely. Share the Gospel.</p>
+  </div>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">Community Guidelines</a>
+    <a href="#">Copyright Policy</a>
+    <a href="#">Contact</a>
+  </div>
+  <p>© 2026 GospelsTube. All rights reserved.</p>
+</footer>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('uploadModal').classList.remove('open')">✕</button>
+    <h2>Upload Your Content</h2>
+    <p>Share your worship music, sermon, or ministry content with the GospelsTube community.</p>
+    <div class="drop-zone" onclick="alert('File picker would open here')">
+      <div class="drop-icon">🎵</div>
+      <p><strong>Click to select</strong> or drag & drop your video</p>
+      <p style="margin-top:4px;font-size:0.78rem">MP4, MOV, AVI up to 2GB</p>
+    </div>
+    <div class="form-field">
+      <label>Title</label>
+      <input type="text" placeholder="e.g. Sunday Worship — Amazing Grace (Live)" />
+    </div>
+    <div class="form-field">
+      <label>Category</label>
+      <select>
+        <option>Worship Music</option>
+        <option>Sermon</option>
+        <option>Gospel Choir</option>
+        <option>Devotional</option>
+        <option>Children's Ministry</option>
+        <option>Prayer</option>
+        <option>Testimony</option>
+        <option>Live Service</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Description</label>
+      <textarea placeholder="Tell the community about this video…"></textarea>
+    </div>
+    <button class="btn-submit">Upload Video</button>
+  </div>
+</div>
+
+<script>
+  // Category pills toggle
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+
+  // Close modal on overlay click
+  document.getElementById('uploadModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  // Card hover glow (subtle)
+  document.querySelectorAll('.video-card, .featured-card').forEach(card => {
+    card.addEventListener('click', () => {
+      alert('Video player would open here — connect this to your video backend!');
+    });
+  });
+</script>
+
+</body>
+</html>
